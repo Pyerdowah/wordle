@@ -1,0 +1,28 @@
+drop table statistics, words, users cascade;
+create table users(userId bigserial primary key, login varchar(255) not null unique, password varchar(255));
+create table words(wordId bigserial primary key, wordName varchar(5) not null unique);
+create table statistics(statisticId bigserial primary key, numberOfTries int, userId bigint references users(userId) on delete cascade, wordId bigint references words(wordId));
+
+--dodanie słów/slowa do banku
+INSERT INTO words(wordname) VALUES ('PLANE'), ('SQUAD'), ('KHAKI'), ('TWICE');
+--zwrocenie listy wszystkich slow z banku
+select * from words;
+--zliczenie slow z banku
+select count(*) from words;
+--zwrocenie slowa z banku o danym id
+select wordname from words where wordid = 1;
+
+
+INSERT INTO users(login, password) VALUES ('pyerdowah', '2137'), ('abuu', 'kupa'), ('tralala', 'lala'), ('user4', 'haslo');
+select * from users;
+delete from users where login = 'abuu';
+select count(*) from users;
+select login from users where userid = 1;
+update users set login = 'trala' where login = 'tralala';
+
+INSERT INTO statistics(numberoftries, userid, wordid) VALUES (4, 1, 1), (3, 1, 2), (2, 4, 3), (4, 2, 4);
+select * from statistics;
+delete from statistics where userid = 2;
+select count(*) from statistics;
+select * from statistics where userid = 1;
+update statistics set numberoftries = 4 where numberoftries = 3;

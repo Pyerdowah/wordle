@@ -1,25 +1,23 @@
 package com.example.wordle.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "words")
 public class Word {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "word_sequence", sequenceName = "word_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "word_sequence")
+    @Column(name = "word_id")
     private Long wordId;
+    @Column(name = "word_name")
     private String wordName;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "statsAndWords",
-            joinColumns = { @JoinColumn(name = "wordID") },
-            inverseJoinColumns = { @JoinColumn(name = "statisticId") }
-    )
-    private List<Statistic> statisticList;
 }
