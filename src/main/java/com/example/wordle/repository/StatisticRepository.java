@@ -15,4 +15,8 @@ public interface StatisticRepository extends JpaRepository<Statistic, Long> {
     @Modifying
     @Query("update Statistic s set s.numberOfTries = :#{#statistic.numberOfTries}, s.user = :#{#statistic.user} where s.statisticId = :#{#statistic.statisticId}")
     void update(Statistic statistic);
+    @Query(value = "select count(*) from statistics where word_id = :#{#wordId}",nativeQuery = true)
+    Integer numberOfStatisticsOfOneWord(int wordId);
+    @Query(value = "select count(*) from statistics where word_id = :#{#wordId} and number_of_tries = :#{#numberOfTries}",nativeQuery = true)
+    Integer numberOfUsersWithTriesNumberOfOneWord(int wordId, int numberOfTries);
 }

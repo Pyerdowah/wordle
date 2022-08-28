@@ -2,7 +2,7 @@ package com.example.wordle.service;
 
 import com.example.wordle.model.User;
 import com.example.wordle.repository.UserRepository;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +12,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    @Autowired
-    public UserService(UserRepository userRepository){
-        this.userRepository = userRepository;
-    }
     public User registerNewUser(User user){
         Optional<User> newUser = userRepository.findUserByLogin(user.getLogin());
         if (newUser.isPresent()) throw new IllegalStateException("login zajety");

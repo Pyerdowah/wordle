@@ -19,4 +19,7 @@ public interface WordRepository extends JpaRepository<Word, Long> {
     @Modifying
     @Query("update Word w set w.wordName = :#{#word.wordName} where w.wordId = :#{#word.wordId}")
     void update(Word word);
+
+    @Query(value = "select * from words order by random() limit 1", nativeQuery = true)
+    Word getRandomWord();
 }

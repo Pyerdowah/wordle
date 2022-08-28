@@ -11,4 +11,5 @@ import lombok.*;
 public class UserResponseDto {
     private String login;
     private String password;
+    private LoginStatus status;
 }
