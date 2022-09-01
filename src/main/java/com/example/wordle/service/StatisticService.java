@@ -1,67 +1,73 @@
 package com.example.wordle.service;
 
+import com.example.wordle.Constants;
+import com.example.wordle.dto.StatisticRequestedDto;
+import com.example.wordle.dto.StatisticResponseDto;
+import com.example.wordle.mapper.StatisticMapper;
 import com.example.wordle.model.Statistic;
-import com.example.wordle.model.User;
 import com.example.wordle.repository.StatisticRepository;
-import com.example.wordle.repository.UserRepository;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StatisticService {
     private final StatisticRepository statisticRepository;
+
     @Autowired
-    public StatisticService(StatisticRepository statisticRepository){
+    public StatisticService(StatisticRepository statisticRepository) {
         this.statisticRepository = statisticRepository;
     }
 
-    public Statistic addNewStatistic(Statistic statistic){
-        statisticRepository.save(statistic);
-        return statistic;
+    public StatisticResponseDto addNewStatistic(StatisticRequestedDto statisticRequestedDto) {
+        Statistic statisticRequest = StatisticMapper.requestedDtoToObject(statisticRequestedDto);
+        Statistic statistic= statisticRepository.save(statisticRequest);
+        return StatisticMapper.objectToResponseDto(statistic);
     }
 
-    public List<Statistic> getAllStatistics(){
-        return statisticRepository.findAll();
+    public List<StatisticResponseDto> getAllStatistics() {
+        return statisticRepository.findAll().stream()
+                .map(StatisticMapper::objectToResponseDto)
+                .collect(Collectors.toList());
     }
 
-    public void deleteStatistic(Statistic statistic) {
+    public void deleteStatistic(StatisticRequestedDto statisticRequestedDto) {
+        Statistic statistic = StatisticMapper.requestedDtoToObject(statisticRequestedDto);
         statisticRepository.deleteById(statistic.getStatisticId());
     }
 
-    public Statistic updateStatistic(Long statisticId, Statistic statisticRequest) {
-        Optional<Statistic> statistic = statisticRepository.findById(statisticId);
-        if (statistic.isEmpty()) {
-            throw new IllegalStateException("nie ma takiej statystyki");
+    public StatisticResponseDto updateStatistic(Long statisticId, StatisticRequestedDto statisticRequestedDto) {
+        Statistic statisticRequest = StatisticMapper.requestedDtoToObject(statisticRequestedDto);
+        Statistic statistic = statisticRepository.findById(statisticId).orElse(null);
+        if (statistic == null) {
+            throw new IllegalStateException("nie ma statystyki o id= " + statisticId);
         }
-        statistic.get().setNumberOfTries(statisticRequest.getNumberOfTries());
-        statistic.get().setUser(statisticRequest.getUser());
-        statistic.get().setCorrectWord(statisticRequest.getCorrectWord());
-        statisticRepository.update(statistic.get());
-        return statistic.get();
+        statistic.setNumberOfTries(statisticRequest.getNumberOfTries());
+        statistic.setUser(statisticRequest.getUser());
+        statistic.setCorrectWord(statisticRequest.getCorrectWord());
+        statisticRepository.update(statistic);
+        return StatisticMapper.objectToResponseDto(statistic);
     }
 
-    private Float numberOfStatisticsOfOneWord(int wordId){
-        return statisticRepository.numberOfStatisticsOfOneWord(wordId).floatValue();
+    private int numberOfStatisticsOfOneWord(int wordId) {
+        return statisticRepository.numberOfStatisticsOfOneWord(wordId);
     }
 
-    private Float numberOfUsersWithTriesNumberOfOneWord(int wordId, int numberOfTries){
-        return statisticRepository.numberOfUsersWithTriesNumberOfOneWord(wordId, numberOfTries).floatValue();
+    private int numberOfUsersWithTriesNumberOfOneWord(int wordId, int numberOfTries) {
+        return statisticRepository.numberOfUsersWithTriesNumberOfOneWord(wordId, numberOfTries);
     }
 
-    public Map<Integer, String> perentageOfUsersWithNumberOfTries(int wordId){
-        Map<Integer, String> stats = new HashMap<>();
-        float users = numberOfStatisticsOfOneWord(wordId);
-        int minNumberOfAttempts = 1;
-        int maxNumberOfAttempts = 6;
-        for (int i = minNumberOfAttempts; i <= maxNumberOfAttempts; i++){
-            float percent = numberOfUsersWithTriesNumberOfOneWord(wordId, i) / users * 100;
-            String stringPercent = String.valueOf(percent);
-            stats.put(i, stringPercent + " %");
+    public Map<Integer, Double> perentageOfUsersWithNumberOfTries(int wordId) {
+        Map<Integer, Double> stats = new HashMap<>();
+        double users = (double) numberOfStatisticsOfOneWord(wordId);
+        for (int i = Constants.MIN_NUMBER_OF_ATTEMPTS; i <= Constants.MAX_NUMBER_OF_ATTEMPTS; i++) {
+            double percent = numberOfUsersWithTriesNumberOfOneWord(wordId, i) / users * 100;
+            stats.put(i, percent);
         }
         return stats;
     }

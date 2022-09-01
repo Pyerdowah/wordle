@@ -1,79 +1,54 @@
 package com.example.wordle.controller;
 
-import com.example.wordle.dto.LoginStatus;
 import com.example.wordle.dto.UserRequestedDto;
 import com.example.wordle.dto.UserResponseDto;
-import com.example.wordle.mapper.UserMapper;
-import com.example.wordle.model.User;
 import com.example.wordle.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
     private final UserService userService;
+
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @GetMapping(path = "/getAllUsers")
-    public List<UserResponseDto> getAllUsers(){
-        return userService.getAllUsers().stream().map(UserMapper::objectToResponseDto).collect(Collectors.toList());
+    public List<UserResponseDto> getAllUsers() {
+        return userService.getAllUsers();
     }
+
     @PostMapping("/registerNewUser")
     public ResponseEntity<UserResponseDto> registerNewUser(@RequestBody UserRequestedDto userRequestedDto) {
-        // convert DTO to entity
-        User userRequest = UserMapper.requestedDtoToObject(userRequestedDto);
-        User user = userService.registerNewUser(userRequest);
-        // convert entity to DTO
-        UserResponseDto userResponseDto = UserMapper.objectToResponseDto(user);
-        return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.registerNewUser(userRequestedDto), HttpStatus.CREATED);
     }
+
     @PutMapping("/updateUser/{id}")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable(name = "id") Long userId, @RequestBody UserRequestedDto userRequestedDto) {
-        // convert DTO to Entity
-        User userRequest = UserMapper.requestedDtoToObject(userRequestedDto);
-
-        User user = userService.updateUser(userId, userRequest);
-
-        // entity to DTO
-        UserResponseDto userResponseDto = UserMapper.objectToResponseDto(user);
-
-        return ResponseEntity.ok().body(userResponseDto);
+        return ResponseEntity.ok().body(userService.updateUser(userId, userRequestedDto));
     }
 
-    @DeleteMapping("/deleteUser")
-    public void deleteUser(@RequestBody UserRequestedDto userRequestedDto) {
-        User userRequest = UserMapper.requestedDtoToObject(userRequestedDto);
-        userService.deleteUser(userRequest);
+    @DeleteMapping("/deleteUser/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable(name = "id") Long userId) {
+        userService.deleteUser(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-    @GetMapping("/login")
-    public ResponseEntity<UserResponseDto> loginUser(@RequestBody UserRequestedDto userRequestedDto){
-        User userRequest = UserMapper.requestedDtoToObject(userRequestedDto);
-        User user = userService.getUserByLogin(userRequest.getLogin());
-        UserResponseDto userResponseDto = UserMapper.objectToResponseDto(user);
-        if (user.getPassword().equals(userRequest.getPassword())){
-            userResponseDto.setStatus(LoginStatus.ZALOGOWANY);
-            return new ResponseEntity<>(userResponseDto, HttpStatus.ACCEPTED);
-        }
-        else {
-            userResponseDto.setStatus(LoginStatus.ZLEHASLO);
-            return new ResponseEntity<>(userResponseDto, HttpStatus.CONFLICT);
-        }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDto> loginUser(@RequestBody UserRequestedDto userRequestedDto) {
+        return userService.loginUser(userRequestedDto);
     }
-    @GetMapping("/logout")
-    public ResponseEntity<UserResponseDto> logoutUser(@RequestBody UserRequestedDto userRequestedDto){
-        User user = UserMapper.requestedDtoToObject(userRequestedDto);
-        UserResponseDto userResponseDto = UserMapper.objectToResponseDto(user);
-        if (userRequestedDto.getStatus() == LoginStatus.ZALOGOWANY) {
-            userResponseDto.setStatus(LoginStatus.WYLOGOWANY);
-        }
-        return new ResponseEntity<>(userResponseDto, HttpStatus.ACCEPTED);
+
+    @PostMapping("/logout")
+    public ResponseEntity<UserResponseDto> logoutUser(@RequestBody UserRequestedDto userRequestedDto) {
+        return userService.logoutUser(userRequestedDto);
     }
 
 }

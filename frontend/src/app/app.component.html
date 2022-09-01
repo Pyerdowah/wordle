@@ -1,0 +1,15 @@
+<form #registerForm="ngForm" (ngSubmit)="onRegisterUser(registerForm)">
+  <div>
+    <label>Login</label>
+    <input type="text" ngModel name="login" class="form-control" id="login" placeholder="login" required>
+  </div>
+  <div>
+    <label>Password</label>
+    <input type="password" ngModel name="password" class="form-control" id="password" placeholder="password" required>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" id="register-user-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <button [disabled]="registerForm.invalid" id="register-user-form" type="submit" class="btn btn-primary" >Register</button>
+  </div>
+</form>

@@ -1,6 +1,5 @@
 package com.example.wordle.repository;
 
-import com.example.wordle.model.User;
 import com.example.wordle.model.Word;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

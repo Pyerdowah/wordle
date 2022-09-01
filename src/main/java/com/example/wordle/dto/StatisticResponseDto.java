@@ -4,7 +4,6 @@ import com.example.wordle.model.User;
 import com.example.wordle.model.Word;
 import lombok.*;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

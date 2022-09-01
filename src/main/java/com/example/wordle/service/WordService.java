@@ -1,10 +1,11 @@
 package com.example.wordle.service;
 
+import com.example.wordle.Constants;
 import com.example.wordle.dto.WordGuessStatus;
+import com.example.wordle.dto.WordRequestedDto;
 import com.example.wordle.dto.WordResponseDto;
-import com.example.wordle.model.User;
+import com.example.wordle.mapper.WordMapper;
 import com.example.wordle.model.Word;
-import com.example.wordle.repository.UserRepository;
 import com.example.wordle.repository.WordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,92 +14,95 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class WordService {
     private final WordRepository wordRepository;
+
     @Autowired
-    public WordService(WordRepository wordRepository){
+    public WordService(WordRepository wordRepository) {
         this.wordRepository = wordRepository;
     }
 
-    public List<Word> getAllWords(){
-        return wordRepository.findAll();
+    public List<WordResponseDto> getAllWords() {
+        return wordRepository.findAll().stream()
+                .map(WordMapper::objectToResponseDto)
+                .collect(Collectors.toList());
     }
 
-    public Word addNewWord(Word word){
-        Optional<Word> newWord = wordRepository.findWordByName(word.getWordName());
-        if (newWord.isPresent()) throw new IllegalStateException("slowo zajete");
+    public WordResponseDto addNewWord(WordRequestedDto wordRequestedDto) {
+        Word word = WordMapper.requestedDtoToObject(wordRequestedDto);
+        Word newWord = wordRepository.findWordByName(word.getWordName()).orElse(null);
+        if (newWord != null) throw new IllegalStateException("slowo zajete");
         wordRepository.save(word);
-        return word;
+        return WordMapper.objectToResponseDto(word);
     }
 
-    public void deleteWord(Word word) {
+    public void deleteWord(WordRequestedDto wordRequestedDto) {
+        Word word = WordMapper.requestedDtoToObject(wordRequestedDto);
         wordRepository.deleteById(word.getWordId());
     }
 
     public Word getWordByWordName(String wordName) {
-        Optional<Word> word = wordRepository.findWordByName(wordName);
-        if (word.isEmpty()){
+        Word word = wordRepository.findWordByName(wordName).orElse(null);
+        if (word == null) {
             throw new IllegalStateException("nie ma takiego slowa");
         }
-        return word.get();
+        return word;
     }
 
-    public Word updateWord(Long wordId, Word wordRequest) {
-        Optional<Word> word = wordRepository.findById(wordId);
-        if (word.isEmpty()) {
+    public WordResponseDto updateWord(Long wordId, WordRequestedDto wordRequestedDto) {
+        Word wordRequest = WordMapper.requestedDtoToObject(wordRequestedDto);
+        Word word = wordRepository.findById(wordId).orElse(null);
+        if (word == null) {
             throw new IllegalStateException("nie ma takiego slowa");
         }
-        Optional<Word> helper = wordRepository.findWordByName(wordRequest.getWordName());
-        if (helper.isPresent() && !Objects.equals(helper.get().getWordId(), word.get().getWordId())) {
+        Word helper = wordRepository.findWordByName(wordRequest.getWordName()).orElse(null);
+        if (helper != null && !Objects.equals(helper.getWordId(), word.getWordId())) {
             throw new IllegalStateException("slowo juz istnieje");
         }
-        word.get().setWordName(wordRequest.getWordName());
-        wordRepository.update(word.get());
-        return word.get();
+        word.setWordName(wordRequest.getWordName());
+        wordRepository.update(word);
+        return WordMapper.objectToResponseDto(word);
     }
 
-    public Word getRandomWord() {
-        return wordRepository.getRandomWord();
+    public WordResponseDto getRandomWord() {
+        Word word = wordRepository.getRandomWord();
+        return WordMapper.objectToResponseDto(word);
     }
 
     public Object getDictionaryInfo(String wordName) throws HttpClientErrorException {
-        String dictionaryApiUrl = "https://api.dictionaryapi.dev/api/v2/entries/en/" + wordName;
+        String dictionaryApiUrl = Constants.DICTIONARY_API_URL + wordName;
         RestTemplate restTemplate = new RestTemplate();
         try {
             return restTemplate.getForObject(dictionaryApiUrl, Object.class);
-        }catch (HttpClientErrorException e){
+        } catch (HttpClientErrorException e) {
             return HttpStatus.NOT_FOUND;
         }
     }
 
-    public Boolean validCharCheck(String letter) {
-        boolean flag = true;
-        String expression= "[a-zA-Z]";
-        if(!letter.matches(expression)){
-            flag=false;
-        }
-        return flag;
+    public Boolean isCharValid(String letter) {
+        return letter.matches(Constants.VALID_LETTERS);
     }
 
     public Map<Integer, WordGuessStatus> wordCheck(String correctWord, String wordName) {
         Map<Integer, WordGuessStatus> guessStatusMap = new HashMap<>();
         Map<Integer, Character> wordNameMap = new HashMap<>();
         Map<Integer, Character> correctWordMap = new HashMap<>();
-        for(int i = 0; i < wordName.length(); i++){
+        for (int i = 0; i < Constants.WORD_LENGTH; i++) {
             guessStatusMap.put(i, WordGuessStatus.GREY);
             wordNameMap.put(i, wordName.charAt(i));
             correctWordMap.put(i, correctWord.charAt(i));
         }
-        for(int i = 0; i < wordName.length(); i++){
-            if (correctWordMap.containsValue(wordNameMap.get(i)) && wordName.charAt(i) == correctWord.charAt(i)){
+        for (int i = 0; i < Constants.WORD_LENGTH; i++) {
+            if (correctWordMap.containsValue(wordNameMap.get(i)) && wordName.charAt(i) == correctWord.charAt(i)) {
                 guessStatusMap.put(i, WordGuessStatus.GREEN);
                 wordNameMap.remove(i);
                 correctWordMap.remove(i);
             }
         }
-        for(int i = 0; i < wordName.length(); i++) {
+        for (int i = 0; i < Constants.WORD_LENGTH; i++){
             if (correctWordMap.containsValue(wordNameMap.get(i)) && wordName.charAt(i) != correctWord.charAt(i)) {
                 guessStatusMap.put(i, WordGuessStatus.YELLOW);
                 wordNameMap.remove(wordName.indexOf(correctWord.charAt(i)));
