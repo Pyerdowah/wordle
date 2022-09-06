@@ -1,0 +1,28 @@
+<div class="modal-footer">
+  <a routerLink="/login" (click)="onLogoutUser()">Logout</a>
+</div>
+<div class="modal-footer">
+  <button (click)="drawRandomWord()">Draw a word!</button>
+  <p *ngIf="randomWord != null">word drawed!</p>
+</div>
+<div class="modal-footer">
+  <div *ngIf="!validWord">this word is invalid!</div>
+  <div [formGroup]="myGroup">
+    <div [formArrayName]="'forms'">
+      <div *ngFor="let form of forms.controls; let i = index;" class="form-group">
+        <form [formGroupName]="i" (keydown.enter)="onMakeWord(i)">
+          <input type="text" name="word" formControlName="id0" maxlength="1" id="{{5 * i}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
+          <input type="text" name="word" formControlName="id1" maxlength="1" id="{{5 * i + 1}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
+          <input type="text" name="word" formControlName="id2" maxlength="1" id="{{5 * i + 2}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
+          <input type="text" name="word" formControlName="id3" maxlength="1" id="{{5 * i + 3}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
+          <input type="text" name="word" formControlName="id4" maxlength="1" id="{{5 * i + 4}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
+        </form>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="won">You won!!!!!!!!!!!!!</div>
+</div>
+<div class="modal-footer">
+
+</div>
+

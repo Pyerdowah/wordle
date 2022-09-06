@@ -2,6 +2,8 @@ package com.example.wordle.controller;
 
 import com.example.wordle.dto.UserRequestedDto;
 import com.example.wordle.dto.UserResponseDto;
+import com.example.wordle.mapper.UserMapper;
+import com.example.wordle.model.User;
 import com.example.wordle.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,13 @@ public class UserController {
     @GetMapping(path = "/getAllUsers")
     public List<UserResponseDto> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping(path = "/getUserByLogin/{login}")
+    public ResponseEntity<UserResponseDto> getUserByLogin(@PathVariable String login) {
+        User user= userService.getUserByLogin(login);
+        UserResponseDto userResponseDto = UserMapper.objectToResponseDto(user);
+        return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }
 
     @PostMapping("/registerNewUser")

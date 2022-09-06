@@ -1,7 +1,7 @@
 import {LoginStatus} from "./loginStatus";
 
 export interface User{
-  wordId: bigint;
+  userId: bigint;
   login: string;
   password: string;
   status: LoginStatus;

@@ -17,16 +17,16 @@ export class WordService {
     return this.http.get<Word>(`http://localhost:8080/getRandomWord`);
   }
 
-  public validWordCheck(wordName: string): Observable<string> {
-    return this.http.get<string>(`http://localhost:8080/validWord/${wordName}`);
+  public validWordCheck(word: string): Observable<void> {
+    return this.http.get<void>(`http://localhost:8080/validWord/${word}`);
   }
 
   public validCharCheck(letter: string): Observable<void> {
     return this.http.get<void>(`http://localhost:8080/validChar/${letter}`);
   }
 
-  public wordCheck(correctWord: string, wordName: string): Observable<Map<number, WordGuessStatus>> {
-    return this.http.get<Map<number, WordGuessStatus>>(`http://localhost:8080/getAllWords/${correctWord}/${wordName}`);
+  public wordCheck(correctWord: string, wordName: string): Promise<any> {
+    return this.http.get<string[]>(`http://localhost:8080/wordCheck/${correctWord}/${wordName}`).toPromise();
   }
 
   public addNewWord(word: Word): Observable<Word> {

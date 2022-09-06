@@ -86,29 +86,29 @@ public class WordService {
         return letter.matches(Constants.VALID_LETTERS);
     }
 
-    public Map<Integer, WordGuessStatus> wordCheck(String correctWord, String wordName) {
-        Map<Integer, WordGuessStatus> guessStatusMap = new HashMap<>();
+    public String[] wordCheck(String correctWord, String wordName) {
+        String[] guessStatusArray = new String[5];
         Map<Integer, Character> wordNameMap = new HashMap<>();
         Map<Integer, Character> correctWordMap = new HashMap<>();
         for (int i = 0; i < Constants.WORD_LENGTH; i++) {
-            guessStatusMap.put(i, WordGuessStatus.GREY);
+            guessStatusArray[i] = "grey";
             wordNameMap.put(i, wordName.charAt(i));
             correctWordMap.put(i, correctWord.charAt(i));
         }
         for (int i = 0; i < Constants.WORD_LENGTH; i++) {
-            if (correctWordMap.containsValue(wordNameMap.get(i)) && wordName.charAt(i) == correctWord.charAt(i)) {
-                guessStatusMap.put(i, WordGuessStatus.GREEN);
+            if (wordName.charAt(i) == correctWord.charAt(i)) {
+                guessStatusArray[i] = "green";
                 wordNameMap.remove(i);
                 correctWordMap.remove(i);
             }
         }
         for (int i = 0; i < Constants.WORD_LENGTH; i++){
             if (correctWordMap.containsValue(wordNameMap.get(i)) && wordName.charAt(i) != correctWord.charAt(i)) {
-                guessStatusMap.put(i, WordGuessStatus.YELLOW);
-                wordNameMap.remove(wordName.indexOf(correctWord.charAt(i)));
-                correctWordMap.remove(i);
+                guessStatusArray[i] = "yellow";
+                wordNameMap.remove(i);
+                correctWordMap.remove(correctWord.indexOf(wordName.charAt(i)));
             }
         }
-        return guessStatusMap;
+        return guessStatusArray;
     }
 }

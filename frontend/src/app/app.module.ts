@@ -2,20 +2,30 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { UserService } from './user/user.service';
-import { HttpClientModule } from '@angular/common/http';import { FormsModule } from '@angular/forms';
-import {WordService} from "./word/word.service";
-import {StatisticService} from "./statistic/statistic.service";
+import {RouterOutlet} from "@angular/router";
+import { RegisterComponent } from './register/register.component';
+import { LoginComponent } from './login/login.component';
+import { GameComponent } from './game/game.component';
+import { AppRoutingModule } from './app-routing.module';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
+
 
 @NgModule({
   declarations: [
     AppComponent,
+    RegisterComponent,
+    LoginComponent,
+    GameComponent
   ],
     imports: [
-        BrowserModule, HttpClientModule,
-        FormsModule
+        BrowserModule,
+        RouterOutlet,
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule,
+        ReactiveFormsModule
     ],
-  providers: [UserService, WordService, StatisticService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

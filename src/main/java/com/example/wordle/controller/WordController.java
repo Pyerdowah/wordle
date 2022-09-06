@@ -35,12 +35,12 @@ public class WordController {
     }
 
     @GetMapping("/validWord/{wordName}")
-    public ResponseEntity<String> validWordCheck(@PathVariable String wordName) {
+    public ResponseEntity<?> validWordCheck(@PathVariable String wordName) {
         Object dictionaryInfo = wordService.getDictionaryInfo(wordName);
         if (dictionaryInfo.toString() != null && dictionaryInfo.toString().contains("phonetic=")) {
-            return new ResponseEntity<>("valid", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>("inValid", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/validChar/{letter}")
@@ -50,9 +50,9 @@ public class WordController {
     }
 
     @GetMapping("/wordCheck/{correctWord}/{wordName}")
-    public ResponseEntity<Map<Integer, WordGuessStatus>> wordCheck(@PathVariable String correctWord, @PathVariable String wordName) {
-        Map<Integer, WordGuessStatus> guessStatusMap = wordService.wordCheck(correctWord, wordName);
-        return new ResponseEntity<>(guessStatusMap, HttpStatus.OK);
+    public ResponseEntity<String[]> wordCheck(@PathVariable String correctWord, @PathVariable String wordName) {
+        String[] guessStatusArray = wordService.wordCheck(correctWord, wordName);
+        return new ResponseEntity<>(guessStatusArray, HttpStatus.OK);
     }
 
     @PostMapping("/addNewWord")

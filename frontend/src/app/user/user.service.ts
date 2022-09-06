@@ -12,6 +12,10 @@ export class UserService {
     return this.http.get<User[]>(`http://localhost:8080/getAllUsers`);
   }
 
+  public getUserByLogin(login: string): Observable<User> {
+    return this.http.get<User>(`http://localhost:8080/getUserByLogin/${login}`);
+  }
+
   public registerNewUser(user: User): Observable<User> {
     return this.http.post<User>(`http://localhost:8080/registerNewUser`, user);
   }
