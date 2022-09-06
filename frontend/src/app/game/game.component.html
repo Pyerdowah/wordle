@@ -11,7 +11,7 @@
     <div [formArrayName]="'forms'">
       <div *ngFor="let form of forms.controls; let i = index;" class="form-group">
         <form [formGroupName]="i" (keydown.enter)="onMakeWord(i)">
-          <input type="text" name="word" formControlName="id0" maxlength="1" id="{{5 * i}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
+          <input type="text" name="word" formControlName="id0" maxlength="1" id="{{5 * i}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off" >
           <input type="text" name="word" formControlName="id1" maxlength="1" id="{{5 * i + 1}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
           <input type="text" name="word" formControlName="id2" maxlength="1" id="{{5 * i + 2}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
           <input type="text" name="word" formControlName="id3" maxlength="1" id="{{5 * i + 3}}" class = "word" (keyup)="onDigitInput($event)" autocomplete="off">
@@ -22,7 +22,51 @@
   </div>
   <div *ngIf="won">You won!!!!!!!!!!!!!</div>
 </div>
-<div class="modal-footer">
+ <div class="keyboard">
+   <div class="modal-footer">
+    <div class="keyboard__row">
+      <button class="key--letter" id="Q" (click)="listenToVirtualKeyboard('Q')">Q</button>
+      <button class="key--letter" id="W" (click)="listenToVirtualKeyboard('W')">W</button>
+      <button class="key--letter" id="E" (click)="listenToVirtualKeyboard('E')">E</button>
+      <button class="key--letter" id="R" (click)="listenToVirtualKeyboard('R')">R</button>
+      <button class="key--letter" id="T" (click)="listenToVirtualKeyboard('T')">T</button>
+      <button class="key--letter" id="Y" (click)="listenToVirtualKeyboard('Y')">Y</button>
+      <button class="key--letter" id="U" (click)="listenToVirtualKeyboard('U')">U</button>
+      <button class="key--letter" id="I" (click)="listenToVirtualKeyboard('I')">I</button>
+      <button class="key--letter" id="O" (click)="listenToVirtualKeyboard('O')">O</button>
+      <button class="key--letter" id="P" (click)="listenToVirtualKeyboard('P')">P</button>
+      </div>
+   </div>
+   <div class="modal-footer">
+      <div class="keyboard__row">
+        <button class="key--letter" id="A" (click)="listenToVirtualKeyboard('A')">A</button>
+        <button class="key--letter" id="S" (click)="listenToVirtualKeyboard('S')">S</button>
+        <button class="key--letter" id="D" (click)="listenToVirtualKeyboard('D')">D</button>
+        <button class="key--letter" id="F" (click)="listenToVirtualKeyboard('F')">F</button>
+        <button class="key--letter" id="G" (click)="listenToVirtualKeyboard('G')">G</button>
+        <button class="key--letter" id="H" (click)="listenToVirtualKeyboard('H')">H</button>
+        <button class="key--letter" id="J" (click)="listenToVirtualKeyboard('J')">J</button>
+        <button class="key--letter" id="K" (click)="listenToVirtualKeyboard('K')">K</button>
+        <button class="key--letter" id="L" (click)="listenToVirtualKeyboard('L')">L</button>
+      </div>
+     </div>
+   <div class="modal-footer">
+      <div class="keyboard__row">
+        <button class="key--letter" id="Z" (click)="listenToVirtualKeyboard('Z')">Z</button>
+        <button class="key--letter" id="X" (click)="listenToVirtualKeyboard('X')">X</button>
+        <button class="key--letter" id="C" (click)="listenToVirtualKeyboard('C')">C</button>
+        <button class="key--letter" id="V" (click)="listenToVirtualKeyboard('V')">V</button>
+        <button class="key--letter" id="B" (click)="listenToVirtualKeyboard('B')">B</button>
+        <button class="key--letter" id="N" (click)="listenToVirtualKeyboard('N')">N</button>
+        <button class="key--letter" id="M" (click)="listenToVirtualKeyboard('M')">M</button>
+        <button class="key--letter" id="enter" (click)="onMakeWord(id)">
+          <span>enter</span>
+        </button>
+        <button class="key--letter" id="delete" (click)="listenToVirtualKeyboard('delete')">
+          <span>delete</span>
+        </button>
+      </div>
+      </div>
+  </div>
 
-</div>
 

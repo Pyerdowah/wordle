@@ -1,12 +1,12 @@
 <div class="container">
 <form #loginForm="ngForm" (ngSubmit)="onLoginUser(loginForm)">
   <div class="form-group">
-    <label for="login">Name     </label>
-    <input type="text" ngModel name="login" class="form-control" id="login" placeholder="Login" required>
+    <label for="login">Login     </label>
+    <input type="text" ngModel name="login" class="form-control" id="login" required>
   </div>
   <div class="form-group">
     <label for="password">Password   </label>
-    <input type="password" ngModel name="password" class="form-control" id="password" placeholder="Password" required>
+    <input type="password" ngModel name="password" class="form-control" id="password" required>
   </div>
   <div class="modal-footer">
     <button [disabled]="loginForm.invalid" type="submit" class="btn btn-primary">Login</button>

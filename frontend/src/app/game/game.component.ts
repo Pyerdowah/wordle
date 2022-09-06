@@ -1,16 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {
   FormArray,
-  FormBuilder,
   FormControl,
   FormGroup,
-  NgForm,
-  Validators
 } from "@angular/forms";
 import {HttpErrorResponse} from "@angular/common/http";
 import {WordService} from "../word/word.service";
 import {Word} from "../word/word";
-
+import Keyboard from 'simple-keyboard'
 
 @Component({
   selector: 'app-game',
@@ -22,13 +19,8 @@ export class GameComponent implements OnInit {
   wordName: any
   validWord: any
   won: any
-  letters = new FormGroup({
-    id0: new FormControl(''),
-    id1: new FormControl(''),
-    id2: new FormControl(''),
-    id3: new FormControl(''),
-    id4: new FormControl('')
-  });
+  id: any
+  letters:string[] = []
   forms = new FormArray([new FormGroup({
     id0: new FormControl(''),
     id1: new FormControl(''),
@@ -71,6 +63,7 @@ export class GameComponent implements OnInit {
   })
   constructor(private wordService: WordService ){
     this.validWord = true
+    this.id = 0
   }
 
   ngOnInit(): void {
@@ -82,13 +75,24 @@ export class GameComponent implements OnInit {
   }
 
   public drawRandomWord(){
-    var randomWord = ''
     this.wordService.getRandomWord().subscribe(
       (word: Word) => {
         this.randomWord = word.wordName;
+        for (var i = 0; i < this.randomWord.length; i++) {
+          this.resetForm(i)
+        }
+        for (var i = 0; i < 30; i++){
+          const input = document.getElementById(String(i)) as HTMLElement
+          input.style.backgroundColor = '#886f68'
+          input.removeAttribute('readonly')
+        }
+        for (var it = 0; it < this.letters.length; it++) {
+          const button = document.getElementById(this.letters[it].toUpperCase()) as HTMLElement
+          button.style.backgroundColor = '#424c55'
+        }
+        this.won = false
       }
     )
-    this.randomWord = randomWord
   }
 
   public validWordCheck(wordInput: string): boolean{
@@ -105,6 +109,10 @@ export class GameComponent implements OnInit {
 
   public async wordCheck(j: number){
     await this.wordService.wordCheck(this.randomWord, this.wordName).then(value => {
+      for (var it = 0; it < 5; it++) {
+        const button = document.getElementById(this.wordName[it].toUpperCase()) as HTMLElement
+        button.style.backgroundColor = value[it]
+      }
       for (var i = j; i < j + 5; i++){
         const input = document.getElementById(String(i)) as HTMLElement
         input.style.backgroundColor = value[i % 5]
@@ -130,6 +138,7 @@ export class GameComponent implements OnInit {
   }
 
   public onMakeWord(i: number){
+    this.id += 1
     var wordName = ''
     wordName += this.forms.controls[i].controls.id0.value
     wordName += this.forms.controls[i].controls.id1.value
@@ -141,16 +150,32 @@ export class GameComponent implements OnInit {
       () => {
         this.validWord = true;
         this.wordCheck(i * 5)
+        const input = document.getElementById(String(5 * (i + 1))) as HTMLElement
+        input.focus()
+        for (var it = 0; it < 5; it++) {
+          this.letters.push(this.wordName.charAt(it).toUpperCase())
+        }
       },
       (error: HttpErrorResponse) => {
         this.validWord = false;
-        this.forms.controls[i].reset()
-        setInterval(() => {this.resetValidation()}, 1000)
+        this.resetForm(i)
+        const input = document.getElementById(String(5 * i)) as HTMLElement
+        input.focus()
+        setInterval(() => {this.resetValidation()}, 2000)
       }
     )
     }
   public resetValidation() {
     this.validWord = true
+  }
+
+  public resetForm(id: number){
+    this.forms.controls[id].reset()
+  }
+
+  public listenToVirtualKeyboard(id: string){
+    const button = document.getElementById(id) as HTMLElement
+    console.log(button.innerText.toLowerCase())
   }
 }
 
