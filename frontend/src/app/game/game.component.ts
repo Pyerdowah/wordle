@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -19,8 +19,11 @@ export class GameComponent implements OnInit {
   wordName: any
   validWord: any
   won: any
+  lost: any
   id: any
   letters:string[] = []
+  element: any
+  newGame: any
   forms = new FormArray([new FormGroup({
     id0: new FormControl(''),
     id1: new FormControl(''),
@@ -68,6 +71,13 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
     this.won = false
+    this.lost = false
+    this.newGame = true
+  }
+
+  ngAfterViewInit() {
+    this.element = document.getElementById(String(0)) as HTMLElement
+    this.element.focus()
   }
 
   public onLogoutUser(): void {
@@ -75,10 +85,13 @@ export class GameComponent implements OnInit {
   }
 
   public drawRandomWord(){
+    this.lost = false
+    this.newGame = true
+    this.id = 0
     this.wordService.getRandomWord().subscribe(
       (word: Word) => {
         this.randomWord = word.wordName;
-        for (var i = 0; i < this.randomWord.length; i++) {
+        for (var i = 0; i < 6; i++) {
           this.resetForm(i)
         }
         for (var i = 0; i < 30; i++){
@@ -121,6 +134,9 @@ export class GameComponent implements OnInit {
       if (value.every((v: any) => v == value[0]) && value[0] == 'green'){
         this.won = true
       }
+      if (this.id == 6 && this.won == false) {
+        this.lost = true
+      }
     })
   }
 
@@ -135,6 +151,7 @@ export class GameComponent implements OnInit {
       return;
     else
       element.focus();
+    this.element = element
   }
 
   public onMakeWord(i: number){
@@ -150,8 +167,10 @@ export class GameComponent implements OnInit {
       () => {
         this.validWord = true;
         this.wordCheck(i * 5)
-        const input = document.getElementById(String(5 * (i + 1))) as HTMLElement
-        input.focus()
+        if (5 * (i + 1) != 30) {
+          const input = document.getElementById(String(5 * (i + 1))) as HTMLElement
+          input.focus()
+        }
         for (var it = 0; it < 5; it++) {
           this.letters.push(this.wordName.charAt(it).toUpperCase())
         }
@@ -160,6 +179,8 @@ export class GameComponent implements OnInit {
         this.validWord = false;
         this.resetForm(i)
         const input = document.getElementById(String(5 * i)) as HTMLElement
+        this.id -= 1
+        this.element = input
         input.focus()
         setInterval(() => {this.resetValidation()}, 2000)
       }
@@ -173,9 +194,57 @@ export class GameComponent implements OnInit {
     this.forms.controls[id].reset()
   }
 
-  public listenToVirtualKeyboard(id: string){
+  public insertValuesToForm(id: string, char: string) {
+    const value = parseInt(id)
+    if (value % 5 == 0) {
+      this.forms.controls[this.id].controls.id0.setValue(char)
+    }
+    if (value % 5 == 1) {
+      this.forms.controls[this.id].controls.id1.setValue(char)
+    }
+    if (value % 5 == 2) {
+      this.forms.controls[this.id].controls.id2.setValue(char)
+    }
+    if (value % 5 == 3) {
+      this.forms.controls[this.id].controls.id3.setValue(char)
+    }
+    if (value % 5 == 4) {
+      this.forms.controls[this.id].controls.id4.setValue(char)
+    }
+
+  }
+
+  public listenToVirtualKeyboard(id: string) {
+
+    if (this.newGame == true) {
+      this.element = document.getElementById('0') as HTMLElement
+      this.newGame = false
+    }
     const button = document.getElementById(id) as HTMLElement
-    console.log(button.innerText.toLowerCase())
+    const input = this.element
+    if (button.innerText == 'delete') {
+      if (parseInt(input.id) % 5 == 0) {
+        input.value = ''
+        this.element.focus()
+      }
+      else {
+        input.value = ''
+        this.element = document.getElementById(String(parseInt(input.id) - 1)) as HTMLElement
+        this.element.focus()
+      }
+    }
+    else {
+      if (input.id == '29') {
+        input.value = button.innerText.toLowerCase()
+        this.insertValuesToForm(input.id, input.value)
+      }
+      else {
+        input.value = button.innerText.toLowerCase()
+        this.insertValuesToForm(input.id, input.value)
+        this.element = document.getElementById(String(parseInt(input.id) + 1)) as HTMLElement
+        this.element.focus()
+      }
+    }
   }
 }
 
