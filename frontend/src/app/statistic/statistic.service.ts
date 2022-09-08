@@ -8,12 +8,20 @@ export class StatisticService {
 
   constructor(private http: HttpClient){}
 
-  public getAllStatisitc(): Observable<Statistic[]> {
+  public getAllStatistic(): Observable<Statistic[]> {
     return this.http.get<Statistic[]>(`http://localhost:8080/getAllStatistics`);
   }
 
-  public getStatisitc(wordId: bigint): Observable<Map<bigint, number>> {
-    return this.http.get<Map<bigint, number>>(`http://localhost:8080/wordStatistic/${wordId}`);
+  public getStatistic(wordId: number): Observable<Array<number>> {
+    return this.http.get<Array<number>>(`http://localhost:8080/wordStatistic/${wordId}`);
+  }
+
+  public getStatisticByLoginAndWord(wordId: bigint, userId: bigint): Observable<Statistic> {
+    return this.http.get<Statistic>(`http://localhost:8080/getStatisticLoginAndWord/${wordId}/${userId}`);
+  }
+
+  public getUsersWords(userId: bigint): Observable<Array<number>> {
+    return this.http.get<Array<number>>(`http://localhost:8080/wordStatisticUser/${userId}`);
   }
 
   public addNewStatistic(statistic: Statistic): Observable<Statistic> {

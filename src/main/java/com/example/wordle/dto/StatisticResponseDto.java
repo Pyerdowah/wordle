@@ -10,6 +10,7 @@ import lombok.*;
 @Getter
 @Setter
 public class StatisticResponseDto {
+    private Long statisticId;
     private int numberOfTries;
     private User user;
     private Word correctWord;

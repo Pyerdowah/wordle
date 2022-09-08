@@ -9,10 +9,7 @@ import com.example.wordle.repository.StatisticRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,8 +23,14 @@ public class StatisticService {
 
     public StatisticResponseDto addNewStatistic(StatisticRequestedDto statisticRequestedDto) {
         Statistic statisticRequest = StatisticMapper.requestedDtoToObject(statisticRequestedDto);
-        Statistic statistic= statisticRepository.save(statisticRequest);
-        return StatisticMapper.objectToResponseDto(statistic);
+        Statistic id = statisticRepository.getStatisticByUserAndWord(statisticRequest.getUser().getUserId(), statisticRequest.getCorrectWord().getWordId());
+        if ( id != null) {
+            return updateStatistic(id.getStatisticId(), statisticRequestedDto);
+        }
+        else {
+            Statistic statistic = statisticRepository.save(statisticRequest);
+            return StatisticMapper.objectToResponseDto(statistic);
+        }
     }
 
     public List<StatisticResponseDto> getAllStatistics() {
@@ -62,13 +65,22 @@ public class StatisticService {
         return statisticRepository.numberOfUsersWithTriesNumberOfOneWord(wordId, numberOfTries);
     }
 
-    public Map<Integer, Double> perentageOfUsersWithNumberOfTries(int wordId) {
-        Map<Integer, Double> stats = new HashMap<>();
+    public ArrayList<Double> perentageOfUsersWithNumberOfTries(int wordId) {
+        ArrayList<Double> stats = new ArrayList<>();
         double users = (double) numberOfStatisticsOfOneWord(wordId);
         for (int i = Constants.MIN_NUMBER_OF_ATTEMPTS; i <= Constants.MAX_NUMBER_OF_ATTEMPTS; i++) {
             double percent = numberOfUsersWithTriesNumberOfOneWord(wordId, i) / users * 100;
-            stats.put(i, percent);
+            stats.add(percent);
         }
         return stats;
+    }
+
+    public ArrayList<Long> getWordsGuessedByUser(Long userId) {
+        return statisticRepository.getWordsGuessedByUser(userId);
+    }
+
+    public StatisticResponseDto getStatisticBLoginAndWordName(Long wordId, Long userId) {
+        Statistic statistic = statisticRepository.getStatisticByUserAndWord(userId, wordId);
+        return StatisticMapper.objectToResponseDto(statistic);
     }
 }

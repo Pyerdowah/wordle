@@ -22,10 +22,10 @@ export class LoginComponent implements OnInit {
     this.userService.loginUser(loginForm.value).subscribe(
       (response: User) => {
         this.router.navigate(['/game']);
-        localStorage.setItem('LOGGED', response.status.toLocaleString());
+        localStorage.setItem('currentUser', String(response.login));
       },
       (error: HttpErrorResponse) => {
-        localStorage.removeItem('LOGGED');
+        localStorage.removeItem('currentUser');
         alert(error.message);
         loginForm.reset();
       }

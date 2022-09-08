@@ -111,4 +111,9 @@ public class WordService {
         }
         return guessStatusArray;
     }
+
+    public WordResponseDto getWordById(Long wordId) {
+        Word word =  wordRepository.findById(wordId).orElse(null);
+        return WordMapper.objectToResponseDto(word);
+    }
 }

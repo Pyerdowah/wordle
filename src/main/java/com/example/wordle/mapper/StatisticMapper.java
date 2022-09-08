@@ -16,6 +16,7 @@ public class StatisticMapper {
 
     public static StatisticResponseDto objectToResponseDto(Statistic statistic) {
         return StatisticResponseDto.builder()
+                .statisticId(statistic.getStatisticId())
                 .numberOfTries(statistic.getNumberOfTries())
                 .user(statistic.getUser())
                 .correctWord(statistic.getCorrectWord())

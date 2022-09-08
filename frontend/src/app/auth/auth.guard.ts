@@ -19,7 +19,7 @@ import {UserService} from "../user/user.service";
 export class AuthGuard implements CanActivate {
   constructor(private authGuardService: AuthguardServiceService, private  router: Router) {
   }
-  canActivate() : boolean{
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
     if (!this.authGuardService.getToken()){
       this.router.navigate(['/login']);
     }

@@ -14,6 +14,7 @@ public class WordMapper {
 
     public static WordResponseDto objectToResponseDto(Word word) {
         return WordResponseDto.builder()
+                .wordId(word.getWordId())
                 .wordName(word.getWordName())
                 .build();
     }

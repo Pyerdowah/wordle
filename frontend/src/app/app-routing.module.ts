@@ -5,6 +5,7 @@ import {LoginComponent} from "./login/login.component";
 import {RegisterComponent} from "./register/register.component";
 import {GameComponent} from "./game/game.component";
 import {AuthGuard} from "./auth/auth.guard";
+import {StatsComponent} from "./stats/stats.component";
 
 
 
@@ -12,6 +13,7 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'game', component: GameComponent, canActivate: [AuthGuard]},
+  {path: 'stats', component: StatsComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: 'login', pathMatch: "full"}
 ]
 

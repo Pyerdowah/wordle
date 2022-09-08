@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,6 +30,11 @@ public class WordController {
         return wordService.getAllWords();
     }
 
+    @GetMapping(path = "/getWordById/{wordId}")
+    public WordResponseDto getWordById(@PathVariable String wordId) {
+        return wordService.getWordById(Long.parseLong(wordId));
+    }
+
     @GetMapping(path = "/getRandomWord")
     public WordResponseDto getRandomWord() {
         return wordService.getRandomWord();
@@ -37,10 +43,10 @@ public class WordController {
     @GetMapping("/validWord/{wordName}")
     public ResponseEntity<?> validWordCheck(@PathVariable String wordName) {
         Object dictionaryInfo = wordService.getDictionaryInfo(wordName);
-        if (dictionaryInfo.toString() != null && dictionaryInfo.toString().contains("phonetic=")) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (Objects.equals(dictionaryInfo.toString(), "404 NOT_FOUND")) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/validChar/{letter}")

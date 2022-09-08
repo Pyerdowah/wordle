@@ -9,6 +9,7 @@ import { GameComponent } from './game/game.component';
 import { AppRoutingModule } from './app-routing.module';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
+import { StatsComponent } from './stats/stats.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    GameComponent
+    GameComponent,
+    StatsComponent
   ],
     imports: [
         BrowserModule,

@@ -1,5 +1,7 @@
 import {Inject, Injectable, NgModule, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
+import {UserService} from "../user/user.service";
+import {User} from "../user/user";
 
 
 
@@ -7,16 +9,12 @@ import {ActivatedRoute} from "@angular/router";
   providedIn: 'root'
 })
 export class AuthguardServiceService{
-
-  constructor(private route: ActivatedRoute) {
+  constructor() {
 
   }
 
   public getToken(){
-    if (localStorage.getItem('LOGGED') != 'LOGGED'){
-      localStorage.removeItem('LOGGED');
-    }
-    return !!localStorage.getItem('LOGGED');
+    return !!localStorage.getItem('currentUser');
   }
 
 

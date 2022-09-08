@@ -15,6 +15,7 @@ public class UserMapper {
 
     public static UserResponseDto objectToResponseDto(User user) {
         return UserResponseDto.builder()
+                .userId(user.getUserId())
                 .login(user.getLogin())
                 .password(user.getPassword())
                 .build();

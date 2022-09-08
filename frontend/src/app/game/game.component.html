@@ -1,8 +1,11 @@
 <div class="modal-footer">
   <a routerLink="/login" (click)="onLogoutUser()">Logout</a>
+  <p><a routerLink="/stats">Click to see statistics!</a></p>
 </div>
 <div class="modal-footer">
+  <p>
   <button (click)="drawRandomWord()">Draw a word!</button>
+  </p>
   <p *ngIf="randomWord != null">word drawed!</p>
 </div>
 <div class="modal-footer">
@@ -20,8 +23,16 @@
       </div>
     </div>
   </div>
-  <div *ngIf="won">You won!!!!!!!!!!!!!</div>
-  <div *ngIf="lost">Correct word was: {{randomWord}}</div>
+
+  <div *ngIf="won" >
+    <p>You won!!!!!!!!!!!!!</p>
+    <p><a routerLink="/stats">Stats were updated! Click to see!</a></p>
+  </div>
+
+  <div *ngIf="lost">
+    <p>Correct word was: {{randomWord}}</p>
+    <p><a routerLink="/stats">Stats were updated! Click to see!</a></p>
+  </div>
 </div>
  <div class="keyboard">
    <div class="modal-footer">

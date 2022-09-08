@@ -13,6 +13,10 @@ export class WordService {
     return this.http.get<Word[]>(`http://localhost:8080/getAllWords`);
   }
 
+  public getWordById(wordId: number): Observable<Word> {
+    return this.http.get<Word>(`http://localhost:8080/getWordById/${wordId}`);
+  }
+
   public getRandomWord(): Observable<Word> {
     return this.http.get<Word>(`http://localhost:8080/getRandomWord`);
   }

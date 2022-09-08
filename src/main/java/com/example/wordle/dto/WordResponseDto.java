@@ -10,6 +10,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class WordResponseDto {
+    private Long wordId;
     private String wordName;
     private Map<Integer, WordGuessStatus> guessStatusMap;
 }

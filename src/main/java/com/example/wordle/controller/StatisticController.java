@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,6 +29,11 @@ public class StatisticController {
         return statisticService.getAllStatistics();
     }
 
+    @GetMapping(path = "/getStatisticLoginAndWord/{wordName}/{login}")
+    public StatisticResponseDto getStatisticBLoginAndWordName(@PathVariable String wordName, @PathVariable String login) {
+        return statisticService.getStatisticBLoginAndWordName(Long.parseLong(wordName), Long.parseLong(login));
+    }
+
     @PostMapping("/addNewStatistic")
     public ResponseEntity<StatisticResponseDto> addNewStatistic(@RequestBody StatisticRequestedDto statisticRequestedDto) {
         return new ResponseEntity<>(statisticService.addNewStatistic(statisticRequestedDto), HttpStatus.CREATED);
@@ -40,9 +46,15 @@ public class StatisticController {
     }
 
     @GetMapping("/wordStatistic/{wordId}")
-    public ResponseEntity<Map<Integer, Double>> getStatistic(@PathVariable String wordId) {
-        Map<Integer, Double> stats = statisticService.perentageOfUsersWithNumberOfTries(Integer.parseInt(wordId));
+    public ResponseEntity<ArrayList<Double>> getStatistic(@PathVariable String wordId) {
+        ArrayList<Double> stats = statisticService.perentageOfUsersWithNumberOfTries(Integer.parseInt(wordId));
         return new ResponseEntity<>(stats, HttpStatus.OK);
+    }
+
+    @GetMapping("/wordStatisticUser/{userId}")
+    public ResponseEntity<ArrayList<Long>> getWordsGuessedByUser(@PathVariable String userId) {
+        ArrayList<Long> words = statisticService.getWordsGuessedByUser(Long.parseLong(userId));
+        return new ResponseEntity<>(words, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteStatistic")

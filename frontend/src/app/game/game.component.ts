@@ -8,6 +8,11 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {WordService} from "../word/word.service";
 import {Word} from "../word/word";
 import Keyboard from 'simple-keyboard'
+import {identity} from "rxjs";
+import {StatisticService} from "../statistic/statistic.service";
+import {Statistic} from "../statistic/statistic";
+import {UserService} from "../user/user.service";
+import {User} from "../user/user";
 
 @Component({
   selector: 'app-game',
@@ -16,6 +21,7 @@ import Keyboard from 'simple-keyboard'
 })
 export class GameComponent implements OnInit {
   randomWord: any
+  wordId: any
   wordName: any
   validWord: any
   won: any
@@ -24,6 +30,7 @@ export class GameComponent implements OnInit {
   letters:string[] = []
   element: any
   newGame: any
+  inputId: any
   forms = new FormArray([new FormGroup({
     id0: new FormControl(''),
     id1: new FormControl(''),
@@ -64,7 +71,7 @@ export class GameComponent implements OnInit {
   myGroup = new FormGroup({
     forms: this.forms
   })
-  constructor(private wordService: WordService ){
+  constructor(private wordService: WordService, private statisticService: StatisticService, private userService: UserService){
     this.validWord = true
     this.id = 0
   }
@@ -81,7 +88,7 @@ export class GameComponent implements OnInit {
   }
 
   public onLogoutUser(): void {
-    localStorage.removeItem('LOGGED');
+    localStorage.removeItem('currentUser');
   }
 
   public drawRandomWord(){
@@ -91,6 +98,7 @@ export class GameComponent implements OnInit {
     this.wordService.getRandomWord().subscribe(
       (word: Word) => {
         this.randomWord = word.wordName;
+        this.wordId = word.wordId
         for (var i = 0; i < 6; i++) {
           this.resetForm(i)
         }
@@ -133,9 +141,12 @@ export class GameComponent implements OnInit {
       }
       if (value.every((v: any) => v == value[0]) && value[0] == 'green'){
         this.won = true
+        this.onAddNewStatistic()
       }
       if (this.id == 6 && this.won == false) {
         this.lost = true
+        this.id = 7
+        this.onAddNewStatistic()
       }
     })
   }
@@ -170,6 +181,10 @@ export class GameComponent implements OnInit {
         if (5 * (i + 1) != 30) {
           const input = document.getElementById(String(5 * (i + 1))) as HTMLElement
           input.focus()
+        }
+        if (parseInt(this.inputId) % 5 == 4) {
+          this.element = document.getElementById(String(parseInt(this.inputId) + 1)) as HTMLElement
+          this.element.focus()
         }
         for (var it = 0; it < 5; it++) {
           this.letters.push(this.wordName.charAt(it).toUpperCase())
@@ -215,7 +230,6 @@ export class GameComponent implements OnInit {
   }
 
   public listenToVirtualKeyboard(id: string) {
-
     if (this.newGame == true) {
       this.element = document.getElementById('0') as HTMLElement
       this.newGame = false
@@ -234,7 +248,8 @@ export class GameComponent implements OnInit {
       }
     }
     else {
-      if (input.id == '29') {
+      if (parseInt(input.id) % 5 == 4) {
+        this.inputId = input.id
         input.value = button.innerText.toLowerCase()
         this.insertValuesToForm(input.id, input.value)
       }
@@ -245,6 +260,18 @@ export class GameComponent implements OnInit {
         this.element.focus()
       }
     }
+  }
+
+  public onAddNewStatistic() {
+    this.userService.getUserByLogin(localStorage.getItem('currentUser') as string).subscribe(
+      (response: User) => {
+        this.statisticService.addNewStatistic({numberOfTries: this.id, user: response, correctWord: {wordId: this.wordId, wordName: this.randomWord}}).subscribe(
+          (response: Statistic) => {
+
+          }
+        )
+      }
+    )
   }
 }
 
