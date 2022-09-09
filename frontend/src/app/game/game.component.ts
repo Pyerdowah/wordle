@@ -112,6 +112,8 @@ export class GameComponent implements OnInit {
           button.style.backgroundColor = '#424c55'
         }
         this.won = false
+        this.element = document.getElementById(String(0)) as HTMLElement
+        this.element.focus()
       }
     )
   }
@@ -141,6 +143,10 @@ export class GameComponent implements OnInit {
       }
       if (value.every((v: any) => v == value[0]) && value[0] == 'green'){
         this.won = true
+        for (var i = j; i < 30; i++){
+          const input = document.getElementById(String(i)) as HTMLElement
+          input.setAttribute('readonly', String(true))
+        }
         this.onAddNewStatistic()
       }
       if (this.id == 6 && this.won == false) {

@@ -1,5 +1,6 @@
 <div class="modal-footer">
   <p><a routerLink="/game">Go back to game!</a></p>
+  <p>Words you've guessed:</p>
   <p>
   <button *ngFor="let word of arrayOfWords" (click)="getStatisticData(word)">{{word}}</button>
   </p>

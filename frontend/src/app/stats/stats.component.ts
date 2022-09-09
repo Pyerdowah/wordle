@@ -105,7 +105,6 @@ export class StatsComponent implements OnInit {
         colorArray.push('#886f68')
       }
     }
-    console.log(colorArray)
     return colorArray
   }
 
