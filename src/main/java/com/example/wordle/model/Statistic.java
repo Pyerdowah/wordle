@@ -1,6 +1,7 @@
 package com.example.wordle.model;
 
 import lombok.*;
+import org.springframework.data.jpa.repository.Modifying;
 
 import javax.persistence.*;
 

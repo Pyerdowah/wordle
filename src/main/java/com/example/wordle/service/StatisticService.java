@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+
 public class StatisticService {
     private final StatisticRepository statisticRepository;
 
@@ -23,7 +24,8 @@ public class StatisticService {
 
     public StatisticResponseDto addNewStatistic(StatisticRequestedDto statisticRequestedDto) {
         Statistic statisticRequest = StatisticMapper.requestedDtoToObject(statisticRequestedDto);
-        Statistic id = statisticRepository.getStatisticByUserAndWord(statisticRequest.getUser().getUserId(), statisticRequest.getCorrectWord().getWordId());
+        Statistic id = statisticRepository
+                .getStatisticByUserAndWord(statisticRequest.getUser().getUserId(), statisticRequest.getCorrectWord().getWordId());
         if ( id != null) {
             return updateStatistic(id.getStatisticId(), statisticRequestedDto);
         }

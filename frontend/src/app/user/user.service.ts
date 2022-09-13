@@ -24,7 +24,7 @@ export class UserService {
     return this.http.put<User>(`http://localhost:8080/updateUser/${userId}`, user);
   }
 
-  public deleteEmployee(userId: bigint): Observable<void> {
+  public deleteUser(userId: bigint): Observable<void> {
     return this.http.delete<void>(`http://localhost:8080/deleteUser/${userId}`);
   }
 

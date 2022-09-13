@@ -8,7 +8,7 @@
   </p>
   <p *ngIf="randomWord != null">word drawed!</p>
 </div>
-<div class="modal-footer">
+<div *ngIf="randomWord != null" class="modal-footer">
   <div *ngIf="!validWord">this word is invalid!</div>
   <div [formGroup]="myGroup">
     <div [formArrayName]="'forms'">
