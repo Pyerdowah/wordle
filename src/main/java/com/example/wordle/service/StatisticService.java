@@ -36,6 +36,9 @@ public class StatisticService {
     }
 
     public List<StatisticResponseDto> getAllStatistics() {
+        if (statisticRepository.findAll() == null){
+            return new ArrayList<>();
+        }
         return statisticRepository.findAll().stream()
                 .map(StatisticMapper::objectToResponseDto)
                 .collect(Collectors.toList());
