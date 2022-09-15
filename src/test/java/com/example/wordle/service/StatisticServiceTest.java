@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 
@@ -80,11 +81,11 @@ public class StatisticServiceTest {
         Statistic statistic1 = new Statistic(1L, 5, user, word);
         Statistic statistic2 = new Statistic(2L, 5, user, word);
         Statistic statistic3 = new Statistic(3L, 5, user, word);
-        List<StatisticResponseDto> listResponseDto= new ArrayList<>();
+        List<StatisticResponseDto> listResponseDto = new ArrayList<>();
         listResponseDto.add(statisticResponseDto1);
         listResponseDto.add(statisticResponseDto2);
         listResponseDto.add(statisticResponseDto3);
-        List<Statistic> list= new ArrayList<>();
+        List<Statistic> list = new ArrayList<>();
         list.add(statistic1);
         list.add(statistic2);
         list.add(statistic3);
@@ -105,12 +106,11 @@ public class StatisticServiceTest {
         StatisticRepository statisticRepository = Mockito.mock(StatisticRepository.class);
         StatisticService statisticService = new StatisticService(statisticRepository);
         //given
-        List<StatisticResponseDto> listResponseDto= new ArrayList<>();
         //when
         when(statisticRepository.findAll()).thenReturn(null);
         //then
         List<StatisticResponseDto> listResponseTested = statisticService.getAllStatistics();
-        assertEquals(listResponseTested, listResponseDto);
+        assertNull(listResponseTested);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class StatisticServiceTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void update_statistic_to_exception(){
+    public void update_statistic_to_exception() {
         StatisticRepository statisticRepository = Mockito.mock(StatisticRepository.class);
         StatisticService statisticService = new StatisticService(statisticRepository);
         //given
@@ -144,7 +144,7 @@ public class StatisticServiceTest {
     }
 
     @Test
-    public void update_statistic_to_update(){
+    public void update_statistic_to_update() {
         StatisticRepository statisticRepository = Mockito.mock(StatisticRepository.class);
         StatisticService statisticService = new StatisticService(statisticRepository);
         //given

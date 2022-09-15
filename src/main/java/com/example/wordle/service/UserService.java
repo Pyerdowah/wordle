@@ -34,6 +34,9 @@ public class UserService {
     }
 
     public List<UserResponseDto> getAllUsers() {
+        if (userRepository.findAll() == null) {
+            return null;
+        }
         return userRepository.findAll().stream()
                 .map(UserMapper::objectToResponseDto)
                 .collect(Collectors.toList());
